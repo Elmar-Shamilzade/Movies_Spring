@@ -2,344 +2,327 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Movies</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cinema Management | Hub</title>
 
-    <!-- BOOTSTRAP -->
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;500;700&family=Inter:wght@400;600&display=swap" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
 
     <style>
-
-        body {
-            padding: 40px;
-            font-family: Arial, Helvetica, sans-serif;
-            background: #2b2b2b;
-            color: #e6e6e6;
+        :root {
+            --bg: #0b0e14;
+            --card-bg: rgba(23, 27, 34, 0.8);
+            --accent: #3d5afe;
+            --accent-hover: #536dfe;
+            --success: #00e676;
+            --danger: #ff5252;
+            --text-main: #ffffff;
+            --text-dim: #94a3b8;
+            --border: rgba(255, 255, 255, 0.08);
         }
 
-        @media (prefers-color-scheme: light) {
-            body {
-                background:#f4f6f8;
-                color:#333;
-            }
+        body {
+            background-color: var(--bg);
+            background-image:
+                radial-gradient(at 0% 0%, rgba(61, 90, 254, 0.15) 0px, transparent 50%),
+                radial-gradient(at 100% 100%, rgba(112, 0, 255, 0.1) 0px, transparent 50%);
+            color: var(--text-main);
+            font-family: 'Inter', sans-serif;
+            min-height: 100vh;
+            padding: 50px 20px;
+        }
+
+        .main-container {
+            max-width: 1100px;
+            margin: 0 auto;
+            animation: fadeIn 0.8s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
         h2 {
-            margin-bottom: 15px;
+            font-family: 'Outfit', sans-serif;
+            font-weight: 700;
+            font-size: 2.5rem;
+            margin-bottom: 30px;
+            letter-spacing: -1px;
+            background: linear-gradient(to right, #fff, var(--text-dim));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
         }
 
-        a[href="/movies/new"] {
-            display:inline-block;
-            margin-bottom:15px;
-            padding:10px 14px;
-            border-radius:6px;
-            background:#2ecc71;
-            color:#fff !important;
-            font-weight:600;
-            text-decoration:none;
+        /* Кнопка добавления */
+        .btn-add {
+            display: inline-flex;
+            align-items: center;
+            background: var(--accent);
+            color: white !important;
+            padding: 12px 24px;
+            border-radius: 12px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            box-shadow: 0 10px 20px rgba(61, 90, 254, 0.3);
+            margin-bottom: 40px;
         }
 
-        a[href="/movies/new"]:hover {
-            background:#27ae60;
+        .btn-add:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 30px rgba(61, 90, 254, 0.4);
+            background: var(--accent-hover);
         }
 
-        form[action="/movies"] {
-            background:#3c3f41;
-            padding:12px 14px;
-            border-radius:8px;
-            border:1px solid #5a5a5a;
+        /* Панель поиска */
+        .search-panel {
+            background: var(--card-bg);
+            backdrop-filter: blur(12px);
+            border: 1px solid var(--border);
+            padding: 30px;
+            border-radius: 24px;
+            margin-bottom: 40px;
         }
 
-        @media (prefers-color-scheme: light){
-            form[action="/movies"]{
-                background:white;
-                border:1px solid #e3e6ec;
-            }
+        .search-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            align-items: flex-end;
         }
 
-        form[action="/movies"] input {
-            padding:7px 10px;
-            border-radius:6px;
-            border:1px solid #666;
-            background:#2b2b2b;
-            color:white;
+        label {
+            display: block;
+            font-size: 0.8rem;
+            color: var(--text-dim);
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
         }
 
-        @media (prefers-color-scheme: light) {
-            form[action="/movies"] input {
-                background:white;
-                color:black;
-                border:1px solid #ccc;
-            }
+        .search-panel input {
+            width: 100%;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border);
+            padding: 12px 16px;
+            border-radius: 10px;
+            color: white;
+            outline: none;
+            transition: border 0.3s;
         }
 
-        form[action="/movies"] button {
-            padding:7px 12px;
-            border-radius:6px;
-            border:none;
-            background:#0d6efd;
-            color:white;
+        .search-panel input:focus {
+            border-color: var(--accent);
         }
 
-        form[action="/movies"] a {
-            margin-left:10px;
-            text-decoration:none;
-            color:#ff6b6b;
-            font-weight:600;
+        .btn-search {
+            background: white;
+            color: black;
+            border: none;
+            padding: 12px;
+            border-radius: 10px;
+            font-weight: 700;
+            transition: 0.3s;
+        }
+
+        .btn-reset {
+            color: var(--text-dim);
+            text-decoration: none;
+            font-size: 0.9rem;
+            margin-left: 15px;
+        }
+
+        /* Таблица */
+        .table-wrapper {
+            background: var(--card-bg);
+            border-radius: 24px;
+            overflow: hidden;
+            border: 1px solid var(--border);
         }
 
         table {
-            width:100%;
-            border-radius:10px;
-            overflow:hidden;
-            border:1px solid #555;
-            background:#3c3f41;
-        }
-
-        @media (prefers-color-scheme: light){
-            table {
-                background:white;
-                border:1px solid #ddd;
-            }
-        }
-
-        th, td {
-            padding:12px 14px;
-            border-bottom:1px solid #555;
+            width: 100%;
+            border-collapse: collapse;
         }
 
         th {
-            background:#4b4f51;
+            background: rgba(255, 255, 255, 0.03);
+            padding: 20px;
+            color: var(--text-dim);
+            font-weight: 500;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            text-align: left;
         }
 
-        @media (prefers-color-scheme: light){
-            th {
-                background:#f1f4fb;
-            }
+        td {
+            padding: 20px;
+            border-bottom: 1px solid var(--border);
+            font-size: 0.95rem;
         }
 
-        tr:nth-child(even){
-            background:#35393b;
+        tr:last-child td { border-bottom: none; }
+
+        tr:hover { background: rgba(255, 255, 255, 0.02); }
+
+        /* Рейтинг и Жанр */
+        .badge-genre {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-size: 0.8rem;
         }
 
-        @media (prefers-color-scheme: light){
-            tr:nth-child(even){
-                background:#fafafa;
-            }
+        /* Кнопки действий */
+        .action-btns {
+            display: flex;
+            gap: 10px;
         }
 
-        tr:hover {
-            background:#2f6aff33;
+        .edit-link {
+            color: var(--accent);
+            text-decoration: none;
+            font-weight: 600;
+            padding: 8px 16px;
+            border-radius: 8px;
+            border: 1px solid var(--accent);
+            transition: 0.3s;
         }
 
-        td:last-child {
-            white-space:nowrap;
+        .edit-link:hover {
+            background: var(--accent);
+            color: white !important;
         }
 
-        td a {
-            padding:6px 10px;
-            border-radius:5px;
-            background:#ffc107;
-            color:#000 !important;
-            text-decoration:none;
-            font-weight:600;
+        .delete-btn {
+            background: rgba(255, 82, 82, 0.1);
+            color: var(--danger);
+            border: 1px solid rgba(255, 82, 82, 0.3);
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-weight: 600;
+            transition: 0.3s;
         }
 
-        td form button {
-            padding:6px 10px;
-            border-radius:5px;
-            border:none;
-            background:#dc3545;
-            color:white;
-            font-weight:600;
-            cursor:pointer;
+        .delete-btn:hover {
+            background: var(--danger);
+            color: white;
         }
 
-        td form button:hover {
-            background:#c82333;
+        /* Flash сообщения */
+        .flash {
+            padding: 16px 20px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            border: 1px solid;
         }
+        .flash-success { background: rgba(0, 230, 118, 0.1); color: var(--success); border-color: rgba(0, 230, 118, 0.2); }
+        .flash-error { background: rgba(255, 82, 82, 0.1); color: var(--danger); border-color: rgba(255, 82, 82, 0.2); }
 
         /* Notification */
         #deleteNotification {
             position: fixed;
-            bottom: 25px;
-            right: 25px;
-            background: #28a745;
-            color: white;
-            padding: 12px 18px;
-            border-radius: 6px;
-            font-weight: 600;
+            top: 30px;
+            right: 30px;
+            background: var(--success);
+            color: black;
+            padding: 15px 25px;
+            border-radius: 12px;
+            font-weight: 700;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
             display: none;
+            z-index: 1000;
         }
-
-        /* ===== Flash messages (Success / Error) ===== */
-.flash {
-    padding: 12px 14px;
-    border-radius: 10px;
-    font-weight: 600;
-    margin: 12px 0 16px;
-    border: 1px solid transparent;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-}
-
-.flash .icon {
-    width: 26px;
-    height: 26px;
-    border-radius: 8px;
-    display: grid;
-    place-items: center;
-    font-size: 14px;
-    flex: 0 0 auto;
-}
-
-.flash .text {
-    margin: 0;
-    line-height: 1.2;
-}
-
-/* Success */
-.flash-success {
-    background: rgba(46, 204, 113, 0.15);
-    border-color: rgba(46, 204, 113, 0.35);
-    color: #d7ffe8;
-}
-.flash-success .icon {
-    background: rgba(46, 204, 113, 0.25);
-    border: 1px solid rgba(46, 204, 113, 0.45);
-}
-
-/* Error */
-.flash-error {
-    background: rgba(220, 53, 69, 0.15);
-    border-color: rgba(220, 53, 69, 0.35);
-    color: #ffe1e6;
-}
-.flash-error .icon {
-    background: rgba(220, 53, 69, 0.25);
-    border: 1px solid rgba(220, 53, 69, 0.45);
-}
-
-/* Light mode */
-@media (prefers-color-scheme: light) {
-    .flash-success {
-        background: rgba(40, 167, 69, 0.12);
-        border-color: rgba(40, 167, 69, 0.30);
-        color: #145a32;
-    }
-    .flash-success .icon {
-        background: rgba(40, 167, 69, 0.18);
-        border-color: rgba(40, 167, 69, 0.25);
-        color: #145a32;
-    }
-
-    .flash-error {
-        background: rgba(220, 53, 69, 0.10);
-        border-color: rgba(220, 53, 69, 0.28);
-        color: #7a0f1b;
-    }
-    .flash-error .icon {
-        background: rgba(220, 53, 69, 0.16);
-        border-color: rgba(220, 53, 69, 0.22);
-        color: #7a0f1b;
-    }
-}
-
     </style>
 </head>
-
 <body>
 
-<h2>Movies</h2>
+<div class="main-container">
+    <div class="d-flex justify-content-between align-items-center">
+        <h2>Cinema Database</h2>
+        <a href="/movies/new" class="btn-add">+ Add New Movie</a>
+    </div>
 
-<!-- Flash messages -->
-<div th:if="${success}" class="flash flash-success">
-    <div class="icon">✓</div>
-    <p class="text" th:text="${success}"></p>
+    <div th:if="${success}" class="flash flash-success">
+        <span>●</span> <span th:text="${success}"></span>
+    </div>
+
+    <div th:if="${error}" class="flash flash-error">
+        <span>●</span> <span th:text="${error}"></span>
+    </div>
+
+    <div class="search-panel">
+        <form method="get" action="/movies">
+            <div class="search-grid">
+                <div>
+                    <label>Title</label>
+                    <input type="text" name="title" th:value="${title}" placeholder="Search titles...">
+                </div>
+                <div>
+                    <label>Genre</label>
+                    <input type="text" name="genre" th:value="${genre}" placeholder="e.g. Sci-Fi">
+                </div>
+                <div class="d-flex align-items-center">
+                    <button type="submit" class="btn-search w-100">Find Movies</button>
+                </div>
+            </div>
+            <div class="mt-3">
+                <a th:href="@{/movies(sortBy='title', direction=${sortBy == 'title' and direction == 'asc' ? 'desc' : 'asc'})}" class="btn-reset">
+                    Sort by Title <span th:text="${direction == 'asc' ? '↑' : '↓'}"></span>
+                </a>
+                <a href="/movies" class="btn-reset">Clear Filters</a>
+            </div>
+        </form>
+    </div>
+
+    <div class="table-wrapper">
+        <table>
+            <thead>
+            <tr>
+                <th>Title</th>
+                <th>Genre</th>
+                <th>Rating</th>
+                <th>Release</th>
+                <th>Duration</th>
+                <th>Actions</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="movie : ${movies}">
+                <td><strong th:text="${movie.title}"></strong></td>
+                <td><span class="badge-genre" th:text="${movie.genre}"></span></td>
+                <td th:text="${movie.rating}"></td>
+                <td th:text="${movie.releaseDate}" class="text-dim"></td>
+                <td th:text="${movie.duration + ' min'}" class="text-dim"></td>
+                <td>
+                    <div class="action-btns">
+                        <a th:href="@{/movies/{id}/edit(id=${movie.id})}" class="edit-link">Edit</a>
+                        <form th:action="@{/movies/{id}/delete(id=${movie.id})}" method="post" onsubmit="return handleDelete()">
+                            <button type="submit" class="delete-btn">Delete</button>
+                        </form>
+                    </div>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
 </div>
 
-<div th:if="${error}" class="flash flash-error">
-    <div class="icon">!</div>
-    <p class="text" th:text="${error}"></p>
-</div>
-
-
-<a href="/movies/new">Add Movie</a>
-
-<form method="get" action="/movies">
-    <a th:href="@{/movies(
-        sortBy='title',
-        direction=${sortBy == 'title' and direction == 'asc' ? 'desc' : 'asc'}
-    )}"> sort
-        <span th:if="${sortBy == 'title'}"
-              th:text="${direction == 'asc' ? '▲' : '▼'}"  ></span>
-    </a> <br>
-
-    Search by title:
-    <input type="text" name="title" th:value="${title}" />
-
-    Search by genre:
-    <input type="text" name="genre" th:value="${genre}" />
-
-    <button type="submit">Search</button>
-    <a href="/movies">Reset</a>
-</form>
-
-<br>
-
-<table border="1">
-    <tr>
-        <th>Title</th>
-        <th>Genre</th>
-        <th>Rating</th>
-        <th>Release Date</th>
-        <th>Duration</th>
-        <th>Actions</th>
-    </tr>
-
-    <tr th:each="movie : ${movies}">
-        <td th:text="${movie.title}"></td>
-        <td th:text="${movie.genre}"></td>
-        <td th:text="${movie.rating}"></td>
-        <td th:text="${movie.releaseDate}"></td>
-        <td th:text="${movie.duration}"></td>
-
-        <td>
-            <a th:href="@{/movies/{id}/edit(id=${movie.id})}">Edit</a>
-
-            <form th:action="@{/movies/{id}/delete(id=${movie.id})}"
-                  method="post"
-                  style="display:inline;"
-                  onsubmit="return handleDelete()">
-
-                <button type="submit">Delete</button>
-            </form>
-        </td>
-    </tr>
-</table>
-
-
-<!-- Notification -->
-<div id="deleteNotification">
-    Movie successfully deleted!
-</div>
-
+<div id="deleteNotification">✓ Movie deleted from database</div>
 
 <script>
     function handleDelete() {
-        if (!confirm("Вы уверены, что хотите удалить?")) {
+        if (!confirm("Are you sure you want to permanently remove this movie?")) {
             return false;
         }
-
-        setTimeout(() => {
-            const box = document.getElementById("deleteNotification");
-            box.style.display = "block";
-
-            setTimeout(() => {
-                box.style.display = "none";
-            }, 2500);
-        }, 400);
-
+        const box = document.getElementById("deleteNotification");
+        box.style.display = "block";
+        setTimeout(() => { box.style.display = "none"; }, 3000);
         return true;
     }
 </script>

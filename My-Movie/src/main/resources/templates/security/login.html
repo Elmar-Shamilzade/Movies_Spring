@@ -2,151 +2,221 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Login</title>
-</head>
-<body>
-<form th:action="@{/login}" method="post">
-    <h2>Login</h2>
-
-    <div>
-        <input type="text" name="username"/>
-    </div>
-
-    <div>
-        <input type="password" name="password"/>
-    </div>
-
-    <button type="submit">Login</button>
-
-    <p th:if="${param.error}" style="color:red">
-        Wrong username or password!
-    </p>
-
-    <p th:if="${param.logout}" style="color:green">
-        Logged out successfully!
-    </p>
-</form>
-<!--    <p th:if="${param.error}" style="color:red">-->
-<!--        Wrong username or password!-->
-<!--    </p>-->
-<!--    <p th:if="${param.logout}" style="color:green">-->
-<!--        Logged out successfully!-->
-<!--    </p>-->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quantum Access | Login</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;600;800&display=swap" rel="stylesheet">
     <style>
-        /* ===== RESET ===== */
-        * {
-            box-sizing: border-box;
+        /* ===== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===== */
+        :root {
+            --accent: #00f2ff;
+            --accent-dark: #006ae6;
+            --glass: rgba(0, 0, 0, 0.7);
+            --border: rgba(255, 255, 255, 0.1);
         }
 
-        /* ===== BACKGROUND ===== */
-        body {
-            font-family: 'Segoe UI', Tahoma, sans-serif;
-            min-height: 100vh;
+        * {
+            box-sizing: border-box;
             margin: 0;
-            background: linear-gradient(135deg, #1d2671, #c33764);
+            padding: 0;
+        }
+
+        /* ===== ФОН С ЭФФЕКТОМ ГЛУБИНЫ ===== */
+        body {
+            font-family: 'Montserrat', sans-serif;
+            height: 100vh;
             display: flex;
             justify-content: center;
             align-items: center;
-            overflow-y: auto; /* <-- СКРОЛЛ */
-            padding: 40px 15px;
-            text-align: center;
+            background: #020205;
+            color: #fff;
+            overflow: hidden;
+            perspective: 1000px;
         }
 
-        /* ===== LOGIN CARD ===== */
+        /* Анимированные световые пятна на фоне */
+        body::before, body::after {
+            content: '';
+            position: absolute;
+            width: 500px;
+            height: 500px;
+            border-radius: 50%;
+            filter: blur(120px);
+            z-index: -1;
+            opacity: 0.4;
+            animation: move 20s infinite alternate;
+        }
+
+        body::before {
+            background: var(--accent-dark);
+            top: -10%;
+            left: -10%;
+        }
+
+        body::after {
+            background: #7000ff;
+            bottom: -10%;
+            right: -10%;
+            animation-delay: -10s;
+        }
+
+        @keyframes move {
+            from { transform: translate(0, 0) scale(1); }
+            to { transform: translate(100px, 100px) scale(1.2); }
+        }
+
+        /* ===== КАРТОЧКА ЛОГИНА ===== */
         form {
-            width: 360px;
-            padding: 35px;
-            border-radius: 14px;
-            background: rgba(255, 255, 255, 0.12);
-            backdrop-filter: blur(18px);
-            -webkit-backdrop-filter: blur(18px);
-            box-shadow: 0 20px 50px rgba(0,0,0,0.35);
-            animation: slideUp 0.8s ease;
+            position: relative;
+            width: 100%;
+            max-width: 420px;
+            padding: 60px 45px;
+            background: var(--glass);
+            backdrop-filter: blur(30px);
+            border-radius: 30px;
+            border: 1px solid var(--border);
+            box-shadow: 0 40px 100px rgba(0, 0, 0, 0.8);
+            text-align: center;
+            animation: formEntrance 1.2s cubic-bezier(0.16, 1, 0.3, 1);
         }
 
-        /* ===== TITLE ===== */
-        h2 {
-    text-align: center;
-    margin-bottom: 25px;
-    font-weight: 700;
-    letter-spacing: 1px;
-    color: #fff;
-}
+        @keyframes formEntrance {
+            from { opacity: 0; transform: scale(0.8) rotateX(-20deg); }
+            to { opacity: 1; transform: scale(1) rotateX(0deg); }
+        }
 
-        /* ===== INPUTS ===== */
-        input[type="text"],
-        input[type="password"] {
+        /* ===== ЗАГОЛОВОК ===== */
+        h2 {
+            font-size: 2.2rem;
+            font-weight: 800;
+            letter-spacing: -1px;
+            margin-bottom: 40px;
+            background: linear-gradient(to bottom, #fff, #888);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        /* ===== ПОЛЯ ВВОДА ===== */
+        .input-group {
+            margin-bottom: 20px;
+            position: relative;
+        }
+
+        input {
             width: 100%;
-            padding: 12px 14px;
-            margin-bottom: 15px;
-            border-radius: 8px;
-            border: none;
-            font-size: 15px;
-            background: rgba(255,255,255,0.85);
-            transition: all 0.25s ease;
+            padding: 18px 25px;
+            border-radius: 15px;
+            border: 1px solid var(--border);
+            background: rgba(255, 255, 255, 0.03);
+            color: #fff;
+            font-size: 16px;
+            font-weight: 300;
+            outline: none;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
         input:focus {
-            outline: none;
-            box-shadow: 0 0 0 3px rgba(255,255,255,0.4);
-            transform: scale(1.02);
+            background: rgba(255, 255, 255, 0.08);
+            border-color: var(--accent);
+            box-shadow: 0 0 20px rgba(0, 242, 255, 0.2);
+            transform: translateY(-2px);
         }
 
-        /* ===== BUTTON ===== */
+        input::placeholder {
+            color: rgba(255, 255, 255, 0.3);
+        }
+
+        /* ===== КНОПКА (МАСШТАБНО) ===== */
         button {
             width: 100%;
-            padding: 12px;
-            border-radius: 8px;
+            padding: 18px;
+            margin-top: 15px;
+            border-radius: 15px;
             border: none;
-            background: linear-gradient(135deg, #00c6ff, #0072ff);
-            color: #fff;
-            font-size: 16px;
+            background: linear-gradient(135deg, var(--accent), var(--accent-dark));
+            color: #000;
+            font-size: 17px;
             font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
             cursor: pointer;
-            transition: all 0.3s ease;
+            transition: all 0.4s ease;
+            box-shadow: 0 10px 30px rgba(0, 242, 255, 0.3);
         }
 
         button:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 25px rgba(0,114,255,0.6);
+            transform: translateY(-4px) scale(1.02);
+            box-shadow: 0 15px 40px rgba(0, 242, 255, 0.5);
+            filter: brightness(1.1);
         }
 
-        /* ===== MESSAGES ===== */
-        p {
-            text-align: center;
-            margin-top: 14px;
+        button:active {
+            transform: translateY(0) scale(0.98);
+        }
+
+        /* ===== СООБЩЕНИЯ ===== */
+        .alert {
+            margin-top: 25px;
+            padding: 12px;
+            border-radius: 12px;
             font-size: 14px;
             font-weight: 600;
+            animation: fadeIn 0.5s ease;
         }
 
-        p[style*="red"] {
-            color: #ffdddd !important;
+        .alert-error {
+            background: rgba(255, 77, 77, 0.1);
+            color: #ff4d4d;
+            border: 1px solid rgba(255, 77, 77, 0.2);
         }
 
-        p[style*="green"] {
-            color: #ddffea !important;
+        .alert-success {
+            background: rgba(0, 255, 136, 0.1);
+            color: #00ff88;
+            border: 1px solid rgba(0, 255, 136, 0.2);
         }
 
-        /* ===== ANIMATION ===== */
-        @keyframes slideUp {
-            from {
-                opacity: 0;
-                transform: translateY(40px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
-        /* ===== MOBILE ===== */
-        @media (max-width: 420px) {
-            form {
-                width: 100%;
-                padding: 28px;
-            }
+        /* Маленькая деталь для красоты - светящаяся линия под заголовком */
+        h2::after {
+            content: '';
+            display: block;
+            width: 40px;
+            height: 4px;
+            background: var(--accent);
+            margin: 10px auto 0;
+            border-radius: 10px;
+            box-shadow: 0 0 10px var(--accent);
         }
+
     </style>
+</head>
+<body>
+
+<form th:action="@{/login}" method="post">
+    <h2>IDENTIFY</h2>
+
+    <div class="input-group">
+        <input type="text" name="username" placeholder="USERNAME" required autocomplete="off"/>
+    </div>
+
+    <div class="input-group">
+        <input type="password" name="password" placeholder="PASSWORD" required/>
+    </div>
+
+    <button type="submit">Access System</button>
+
+    <div th:if="${param.error}" class="alert alert-error">
+        Access Denied. Check credentials.
+    </div>
+
+    <div th:if="${param.logout}" class="alert alert-success">
+        Session ended safely.
+    </div>
+</form>
 
 </body>
 </html>

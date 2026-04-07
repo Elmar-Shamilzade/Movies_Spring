@@ -9,19 +9,18 @@ import org.springframework.security.web.SecurityFilterChain;
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
+
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
-                .authorizeHttpRequests(auth ->
-                        auth.requestMatchers("/login", "/css/**", "/js/**")
-                                .permitAll()
-                .requestMatchers("/movies/new", "/movies/*/delete")
-                                .hasRole("ADMIN")
-                                .anyRequest().authenticated())
+                .authorizeHttpRequests(auth -> auth
+                        .requestMatchers("/login", "/css/**", "/js/**").permitAll()
+                        .requestMatchers("/movies/new", "/movies/*/delete").hasRole("ADMIN")
+                        .anyRequest().authenticated()
+                )
                 .formLogin(form -> form
                         .loginPage("/login")
                         .defaultSuccessUrl("/movies", true)
-                        .failureUrl("/login?error")
                         .permitAll()
                 )
                 .logout(logout -> logout
@@ -30,3 +29,4 @@ public class SecurityConfig {
         return http.build();
     }
 }
+

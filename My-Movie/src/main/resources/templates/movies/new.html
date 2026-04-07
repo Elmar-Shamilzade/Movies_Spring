@@ -2,49 +2,220 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Add Movie</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add New Masterpiece | Cinema Hub</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;600;800&family=Inter:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #0f172a;
+            --accent: #6366f1;
+            --accent-glow: rgba(99, 102, 241, 0.5);
+            --glass: rgba(30, 41, 59, 0.7);
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --error: #fb7185;
+            --border: rgba(255, 255, 255, 0.1);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg);
+            /* Динамический фон */
+            background-image:
+                radial-gradient(circle at 10% 20%, rgba(99, 102, 241, 0.15) 0%, transparent 40%),
+                radial-gradient(circle at 90% 80%, rgba(139, 92, 246, 0.15) 0%, transparent 40%);
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        /* Контейнер-карточка */
+        .form-card {
+            background: var(--glass);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            padding: 50px 40px;
+            border-radius: 32px;
+            border: 1px solid var(--border);
+            width: 100%;
+            max-width: 500px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            animation: slideUp 0.7s cubic-bezier(0.2, 0.8, 0.2, 1);
+        }
+
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        h2 {
+            font-family: 'Outfit', sans-serif;
+            font-weight: 800;
+            font-size: 2rem;
+            margin-bottom: 10px;
+            text-align: center;
+            letter-spacing: -1px;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            margin-bottom: 35px;
+        }
+
+        /* Группы ввода */
+        .input-group {
+            margin-bottom: 24px;
+            position: relative;
+        }
+
+        .input-group label {
+            display: block;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--text-muted);
+            margin-bottom: 8px;
+            margin-left: 4px;
+        }
+
+        input {
+            width: 100%;
+            background: rgba(15, 23, 42, 0.6);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 14px 18px;
+            color: white;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            outline: none;
+        }
+
+        input:focus {
+            border-color: var(--accent);
+            background: rgba(15, 23, 42, 0.8);
+            box-shadow: 0 0 0 4px var(--accent-glow);
+            transform: translateY(-2px);
+        }
+
+        /* Ошибки валидации */
+        .error-msg {
+            color: var(--error);
+            font-size: 0.8rem;
+            margin-top: 6px;
+            padding-left: 4px;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateX(-5px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        /* Кнопки */
+        .actions {
+            margin-top: 40px;
+            display: grid;
+            gap: 15px;
+        }
+
+        button {
+            background: var(--accent);
+            color: white;
+            border: none;
+            padding: 16px;
+            border-radius: 14px;
+            font-size: 1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 10px 20px -5px var(--accent-glow);
+        }
+
+        button:hover {
+            filter: brightness(1.1);
+            transform: translateY(-3px);
+            box-shadow: 0 15px 30px -5px var(--accent-glow);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        .back-link {
+            text-align: center;
+            color: var(--text-muted);
+            text-decoration: none;
+            font-size: 0.9rem;
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+
+        .back-link:hover {
+            color: white;
+        }
+
+        /* Кастомная иконка календаря для input[type="date"] */
+        input::-webkit-calendar-picker-indicator {
+            filter: invert(1);
+            opacity: 0.5;
+            cursor: pointer;
+        }
+    </style>
 </head>
 <body>
+
+<div class="form-card">
     <h2>New Movie</h2>
+    <p class="subtitle">Enter the details of the cinematic masterpiece</p>
+
     <form th:action="@{/movies}" th:object="${movieForm}" method="post">
-        Title <input type="text" th:field="*{title}" />
-              <div style="color:red"
-              th:if="${#fields.hasErrors('title')}"
-              th:errors="*{title}">
 
-              </div> <br>
-        Genre <input type="text" th:field="*{genre}" />
-                <div style="color:red"
-                    th:if="${#fields.hasErrors('genre')}"
-                    th:errors="*{genre}">
+        <div class="input-group">
+            <label>Title</label>
+            <input type="text" th:field="*{title}" placeholder="e.g. Interstellar" required/>
+            <div class="error-msg" th:if="${#fields.hasErrors('title')}" th:errors="*{title}"></div>
+        </div>
 
-        </div> <br>
+        <div class="input-group">
+            <label>Genre</label>
+            <input type="text" th:field="*{genre}" placeholder="e.g. Science Fiction" required/>
+            <div class="error-msg" th:if="${#fields.hasErrors('genre')}" th:errors="*{genre}"></div>
+        </div>
 
-        Rating <input type="number" step="0.1" th:field="*{rating}" />
-<!--        <div style="color:red"-->
-<!--             th:if="${#fields.hasErrors('rating')}"-->
-<!--             th:errors="*{rating}">-->
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+            <div class="input-group">
+                <label>Rating</label>
+                <input type="number" step="0.1" th:field="*{rating}" placeholder="0.0"/>
+            </div>
+            <div class="input-group">
+                <label>Duration (min)</label>
+                <input type="text" th:field="*{duration}" placeholder="120"/>
+            </div>
+        </div>
 
-<!--        </div>-->
-        <br>
-        Duration <input type="text" th:field="*{duration}" />
-<!--        <div style="color:red"-->
-<!--             th:if="${#fields.hasErrors('duration')}"-->
-<!--             th:errors="*{duration}">-->
+        <div class="input-group">
+            <label>Release Date</label>
+            <input type="date" th:field="*{releaseDate}" />
+        </div>
 
-<!--        </div>-->
-        <br>
-        Release Date <input type="date" th:field="*{releaseDate}" />
-<!--        <div style="color:red"-->
-<!--             th:if="${#fields.hasErrors('releaseDate')}"-->
-<!--             th:errors="*{releaseDate}">-->
-
-<!--        </div>-->
-        <br>
-        <button type="submit">Save</button>
+        <div class="actions">
+            <button type="submit">Save Movie</button>
+            <a href="/movies" class="back-link">← Cancel and Go Back</a>
+        </div>
     </form>
-
-    <a href="/movies">Back</a>
+</div>
 
 </body>
 </html>

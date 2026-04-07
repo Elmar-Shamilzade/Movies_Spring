@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Enterprise Access System</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Inter:wght@300;500&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-glow: #00d2ff;
+            --secondary-glow: #3a7bd5;
+            --text-color: #ffffff;
+            --glass: rgba(255, 255, 255, 0.03);
+            --border-glass: rgba(255, 255, 255, 0.1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: #050505;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Inter', sans-serif;
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* Анимированный фон (масштабность) */
+        body::before {
+            content: '';
+            position: absolute;
+            width: 150%;
+            height: 150%;
+            background: radial-gradient(circle at center, #1a1a2e 0%, #000000 70%);
+            animation: pulseBg 10s infinite alternate;
+            z-index: -1;
+        }
+
+        @keyframes pulseBg {
+            0% { transform: scale(1); opacity: 0.8; }
+            100% { transform: scale(1.1); opacity: 1; }
+        }
+
+        /* Декоративные плавающие круги для глубины */
+        .orb {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(80px);
+            z-index: -1;
+        }
+        .orb-1 { width: 400px; height: 400px; background: var(--secondary-glow); top: -10%; left: -10%; opacity: 0.3; }
+        .orb-2 { width: 300px; height: 300px; background: var(--primary-glow); bottom: -5%; right: -5%; opacity: 0.2; }
+
+        /* Центр управления (Форма) */
+        .login-box {
+            position: relative;
+            background: var(--glass);
+            backdrop-filter: blur(25px);
+            -webkit-backdrop-filter: blur(25px);
+            padding: 60px 50px;
+            border-radius: 2px; /* Острые углы выглядят строже и дороже */
+            border-left: 1px solid var(--border-glass);
+            border-top: 1px solid var(--border-glass);
+            box-shadow: 20px 20px 50px rgba(0, 0, 0, 0.5);
+            width: 100%;
+            max-width: 450px;
+            text-align: center;
+            animation: appear 1s ease-out;
+        }
+
+        @keyframes appear {
+            from { opacity: 0; clip-path: inset(0 50% 0 50%); }
+            to { opacity: 1; clip-path: inset(0 0 0 0); }
+        }
+
+        h2 {
+            font-family: 'Orbitron', sans-serif;
+            color: var(--text-color);
+            text-transform: uppercase;
+            letter-spacing: 5px;
+            font-size: 1.5rem;
+            margin-bottom: 40px;
+            text-shadow: 0 0 15px var(--primary-glow);
+        }
+
+        .input-wrap {
+            margin-bottom: 25px;
+            position: relative;
+        }
+
+        input {
+            width: 100%;
+            background: transparent;
+            border: none;
+            border-bottom: 1px solid var(--border-glass);
+            padding: 12px 5px;
+            color: #fff;
+            font-size: 1rem;
+            letter-spacing: 1px;
+            transition: all 0.4s;
+            outline: none;
+        }
+
+        input:focus {
+            border-bottom: 1px solid var(--primary-glow);
+            box-shadow: 0 1px 0 var(--primary-glow);
+        }
+
+        input::placeholder {
+            color: rgba(255,255,255,0.3);
+            text-transform: uppercase;
+            font-size: 0.7rem;
+            letter-spacing: 2px;
+        }
+
+        /* Масштабная кнопка */
+        button {
+            width: 100%;
+            margin-top: 30px;
+            padding: 15px;
+            background: transparent;
+            border: 1px solid var(--primary-glow);
+            color: var(--primary-glow);
+            font-family: 'Orbitron', sans-serif;
+            font-weight: 700;
+            cursor: pointer;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            transition: all 0.5s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        button:hover {
+            background: var(--primary-glow);
+            color: #000;
+            box-shadow: 0 0 30px var(--primary-glow);
+        }
+
+        /* Сообщения системы */
+        .status {
+            margin-top: 25px;
+            font-size: 0.7rem;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        .error { color: #ff4d4d; text-shadow: 0 0 10px #ff4d4d; }
+        .success { color: #00ff88; text-shadow: 0 0 10px #00ff88; }
+
+        /* Декор углов */
+        .corner {
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            border: 2px solid var(--primary-glow);
+        }
+        .top-left { top: -2px; left: -2px; border-right: none; border-bottom: none; }
+        .bottom-right { bottom: -2px; right: -2px; border-left: none; border-top: none; }
+    </style>
+</head>
+<body>
+
+<div class="orb orb-1"></div>
+<div class="orb orb-2"></div>
+
+<div class="login-box">
+    <div class="corner top-left"></div>
+    <div class="corner bottom-right"></div>
+
+    <h2>System Login</h2>
+
+    <form th:action="@{/login}" method="post">
+        <div class="input-wrap">
+            <input type="text" name="username" placeholder="User ID" required autocomplete="off"/>
+        </div>
+        <div class="input-wrap">
+            <input type="password" name="password" placeholder="Access Code" required/>
+        </div>
+        <button type="submit">Authenticate</button>
+    </form>
+
+    <div th:if="${param.error}" class="status error">
+        [Access Denied]: Identity Verification Failed
+    </div>
+
+    <div th:if="${param.logout}" class="status success">
+        [Session Closed]: User Disconnected
+    </div>
+</div>
+
+</body>
+</html>
